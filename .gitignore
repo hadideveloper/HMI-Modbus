@@ -1,0 +1,8 @@
+
+HardwareInterface/.vs
+HardwareInterface/HardwareInterface/obj
+HardwareInterface/packages
+*.pdb
+*.xml
+
+
