@@ -9,10 +9,10 @@ using Modbus;
 
 namespace HardwareInterface
 {
-    public class HardwareInterface
+    public class ComManager
     {
         #region Private variables
-        private static HardwareInterface _instance;
+        private static ComManager _instance;
         private SerialPort _sp;
         private Thread _readThread = null;
         private Thread _writeThread = null;
@@ -23,24 +23,21 @@ namespace HardwareInterface
         #endregion
 
         #region Events
-        public delegate void ReceiveNewPacketEvent(object sender, Packet packet);
         public event ReceiveNewPacketEvent OnReceiveNewPacket;
-
-        public delegate void TimeoutEvent(object sender, Packet packet);
         public event TimeoutEvent OnTimeout;
         #endregion
 
-        private HardwareInterface()
+        private ComManager()
         {
             _settings = SettingManager.Instance.Settings;
         }
 
-        public static HardwareInterface Instance
+        public static ComManager Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = new HardwareInterface();
+                    _instance = new ComManager();
 
                 return _instance;
             }
