@@ -8,6 +8,9 @@ namespace HardwareInterface
 {
     public enum Commands
     {
+        GetVersion,
+        Reset,
+        RunBootloader,
         InitSerialPort,
         InitCan,
         SendOverSerialPort,
