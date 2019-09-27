@@ -31,6 +31,14 @@ namespace HardwareInterface
             }
         }
 
+        public bool IsConnected
+        {
+            get
+            {
+                return _cm.IsConnected;
+            }
+        }
+
         public Result OpenSerialPort(string portName)
         {
             Result result = _cm.OpenSerialPort(portName);
@@ -50,12 +58,9 @@ namespace HardwareInterface
             }
         }
 
-        public void ModBusSend( int id)
+        public void ModBusSend(int id)
         {
-            /*StreamResource sr = new StreamResource();
-            ModbusMaster master = ModbusSerialMaster.CreateRtu(sr);
-
-            master.ReadCoils(1, 100, 1);*/
+            
         } 
 
         private void ComMan_OnReceivedPack(object sender, Packet p)

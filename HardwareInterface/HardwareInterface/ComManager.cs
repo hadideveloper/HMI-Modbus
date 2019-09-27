@@ -32,6 +32,17 @@ namespace HardwareInterface
             _settings = SettingManager.Instance.Settings;
         }
 
+        public bool IsConnected
+        {
+            get
+            {
+                if (_sp == null)
+                    return false;
+
+                return _sp.IsOpen;
+            }
+        }
+
         public static ComManager Instance
         {
             get

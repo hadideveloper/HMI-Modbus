@@ -53,6 +53,8 @@
     <Compile Include="Commands.cs" />
     <Compile Include="ErrorCodes.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="ModBus.cs" />
+    <Compile Include="ModBus.Functions.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="ComManager.cs" />

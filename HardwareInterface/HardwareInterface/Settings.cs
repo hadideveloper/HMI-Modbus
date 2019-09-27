@@ -12,6 +12,7 @@ namespace HardwareInterface
 {
     public class Settings
     {
+        public string ComPort { set; get; }
         public int Version { set; get; }
         public int DelayBetweenTwoPacket { set; get; }
         public int TryToSendPacket { set; get; }
@@ -106,6 +107,7 @@ namespace HardwareInterface
                 Version = 1,
                 DelayBetweenTwoPacket = 5,
                 TryToSendPacket = 5,
+                ComPort = "COM1",
             };
         }
 
