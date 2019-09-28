@@ -2,6 +2,9 @@
 HardwareInterface/.vs
 HardwareInterface/HardwareInterface/obj
 HardwareInterface/packages
+HardwareInterface/TestHmiInterface/obj
+HardwareInterface/TestHmiInterface/bin
+
 *.pdb
 *.xml
 

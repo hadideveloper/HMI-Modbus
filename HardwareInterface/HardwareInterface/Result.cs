@@ -74,5 +74,18 @@ namespace HardwareInterface
                 };
             }
         }
+
+        public static Result NotImplemented
+        {
+            get
+            {
+                return new Result()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.NotImplemented,
+                    ErrorMessage = "This feature not implemented yet",
+                };
+            }
+        }
     }
 }

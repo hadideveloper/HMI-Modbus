@@ -4,32 +4,26 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Modbus.Device;
-using Modbus.Message;
-using Modbus.IO;
 
 namespace HardwareInterface
 {
     public class HardwareInterface
     {
-        private static HardwareInterface _instance;
         private ComManager _cm;
+        public int Port { set; get; }
+        public int Baudrate { set; get; }
+        public Commands[] SupportedCommands { set; get; }
 
-        private HardwareInterface()
+        public event ReceiveNewPacketEvent OnReceiceNewPacket;
+
+        public HardwareInterface(int port, int baudrate, Commands[] supportedCommands)
         {
             _cm = ComManager.Instance;
+            Port = port;
+            SupportedCommands = supportedCommands;
+            Baudrate = baudrate;
         }
 
-        public static HardwareInterface Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new HardwareInterface();
-
-                return _instance;
-            }
-        }
 
         public bool IsConnected
         {
@@ -39,7 +33,7 @@ namespace HardwareInterface
             }
         }
 
-        public Result OpenSerialPort(string portName)
+        public Result OpenHostSerialPort(string portName)
         {
             Result result = _cm.OpenSerialPort(portName);
             if (result.Success == false)
@@ -58,14 +52,44 @@ namespace HardwareInterface
             }
         }
 
-        public void ModBusSend(int id)
+        public Result InitSerialPort(int port, int baudrate)
         {
-            
+            return _cm.SendPacket(new Packet() { 
+                Command = Commands.InitSerialPort,
+                CommandParam = (byte)port,
+                IsWaitForResponse = true,
+                Data = new byte[] {
+                    (byte)(baudrate >> 24),
+                    (byte)(baudrate >> 16),
+                    (byte)(baudrate >> 8), 
+                    (byte)(baudrate)
+                }
+            });
+        }
+
+        public Result SendOverSerialPort(int port, byte[] message)
+        {
+            return _cm.SendPacket(new Packet() { 
+                Command = Commands.SendOverSerialPort,
+                CommandParam = (byte)port,
+                Data = message,
+                IsWaitForResponse = true,
+            });
         } 
 
-        private void ComMan_OnReceivedPack(object sender, Packet p)
+        private bool ComMan_OnReceivedPack(object sender, Packet p)
         {
-            
+            //! Check if it's supported Command for this interface
+            if (SupportedCommands.Any(i => i == p.Command) == false)
+                return false;
+
+            //! Check if it's interface port
+            if (p.CommandParam != Port)
+                return false;
+
+            OnReceiceNewPacket?.Invoke(this, p);
+
+            return true;
         }
 
     }

@@ -14,6 +14,7 @@ namespace HardwareInterface
         AlreadyStarted,
         SendPacketTimeout,
         ReceiveTimeout,
-        ResponseTimeout
+        ResponseTimeout,
+        NotImplemented,
     }
 }

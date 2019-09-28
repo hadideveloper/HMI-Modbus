@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace HardwareInterface
 {
-    public delegate void ReceiveNewPacketEvent(object sender, Packet packet);
+    public delegate bool ReceiveNewPacketEvent(object sender, Packet packet);
 
     public delegate void TimeoutEvent(object sender, Packet packet);
+
+    public delegate void ReceiveNewModBudResponse(object sender, ModBusResponse response);
 }
