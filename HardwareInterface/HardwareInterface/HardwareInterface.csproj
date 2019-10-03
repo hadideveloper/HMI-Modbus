@@ -52,6 +52,11 @@
     <Compile Include="Logger.cs" />
     <Compile Include="ModBus.cs" />
     <Compile Include="ModBusFunctions.cs" />
+    <Compile Include="ModBusMode.cs" />
+    <Compile Include="ModBusReadInputRegisterResponse.cs" />
+    <Compile Include="ModBusReadHoldingRegisterResponse.cs" />
+    <Compile Include="ModBusReadInputResponse.cs" />
+    <Compile Include="ModBusReadCoilResponse.cs" />
     <Compile Include="ModBusRequest.cs" />
     <Compile Include="ModBusResponse.cs" />
     <Compile Include="ModbusUtility.cs" />
