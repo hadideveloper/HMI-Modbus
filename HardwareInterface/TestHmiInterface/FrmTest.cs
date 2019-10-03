@@ -35,7 +35,7 @@ namespace TestHmiInterface
 
         private void BtnReadCoils_Click(object sender, EventArgs e)
         {
-            ModBus.ReadCoils(new ModBusRequest()
+            ModBus.ReadCoils(new ModBusReadRequest()
             {
                 SlaveAddress = 17,
                 StartAddress = 19,

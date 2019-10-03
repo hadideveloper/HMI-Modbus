@@ -10,5 +10,5 @@ namespace HardwareInterface
 
     public delegate void TimeoutEvent(object sender, Packet packet);
 
-    public delegate void ReceiveNewModBudResponse(object sender, ModBusResponse response);
+    public delegate void ReceiveNewModBudResponse(object sender, ModbusFunctions function, object response);
 }

@@ -10,6 +10,19 @@ namespace HardwareInterface
     {
         public byte SlaveAddress { set; get; }
         public ushort StartAddress { set; get; }
+    }
+    public class ModBusReadRequest : ModBusRequest
+    {
         public ushort NumberOfPoints { set; get; }
+    }
+
+    public class ModBusSingleWriteRequest : ModBusRequest
+    {
+        public ushort NewValue { set; get; }
+    }
+
+    public class ModBusMultiWriteRequest : ModBusRequest
+    {
+        public ushort[] NewValues { set; get; }
     }
 }

@@ -6,20 +6,25 @@ using System.Threading.Tasks;
 
 namespace HardwareInterface
 {
-    public static class ModbusFunctions
+    public enum ModbusFunctions
+    {
+        ReadCoils = 1,
+        ReadInputs = 2,
+        ReadHoldingRegisters = 3,
+        ReadInputRegisters = 4,
+        WriteSingleCoil = 5,
+        WriteSingleRegister = 6,
+        Diagnostics = 8,
+        DiagnosticsReturnQueryData = 0,
+        WriteMultipleCoils = 15,
+        WriteMultipleRegisters = 16,
+        ReadWriteMultipleRegisters = 23,
+}
+    public static class ModbusProperties
     {
         // supported function codes
         public const byte ReadCoils = 1;
-        public const byte ReadInputs = 2;
-        public const byte ReadHoldingRegisters = 3;
-        public const byte ReadInputRegisters = 4;
-        public const byte WriteSingleCoil = 5;
-        public const byte WriteSingleRegister = 6;
-        public const byte Diagnostics = 8;
-        public const ushort DiagnosticsReturnQueryData = 0;
-        public const byte WriteMultipleCoils = 15;
-        public const byte WriteMultipleRegisters = 16;
-        public const byte ReadWriteMultipleRegisters = 23;
+        
 
         public const int MaximumDiscreteRequestResponseSize = 2040;
         public const int MaximumRegisterRequestResponseSize = 127;
