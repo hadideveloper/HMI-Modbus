@@ -75,7 +75,7 @@ namespace HardwareInterface
 
                     var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
 
-                    if( checkCrc && crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
+                    if( crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
                         OnReceiveNewResponse?.Invoke(this, ModbusFunctions.ReadCoils, res);
                 }
                 else if( function == ModbusFunctions.ReadInputs)
@@ -95,7 +95,7 @@ namespace HardwareInterface
 
                     var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
 
-                    if(checkCrc && crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
+                    if( crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
                         OnReceiveNewResponse?.Invoke(this, ModbusFunctions.ReadInputs, res);
                 }
                 else if(function == ModbusFunctions.ReadHoldingRegisters)
@@ -116,7 +116,7 @@ namespace HardwareInterface
 
                     var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
 
-                    if(checkCrc && crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
+                    if(crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
                         OnReceiveNewResponse?.Invoke(this, ModbusFunctions.ReadHoldingRegisters, res);
                 }
                 else if (function == ModbusFunctions.ReadInputs)
@@ -137,7 +137,7 @@ namespace HardwareInterface
 
                     var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
 
-                    if (checkCrc && crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
+                    if (crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
                         OnReceiveNewResponse?.Invoke(this, ModbusFunctions.ReadInputs, res);
                 }
             }

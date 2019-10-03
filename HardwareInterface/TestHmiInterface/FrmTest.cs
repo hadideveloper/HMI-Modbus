@@ -19,9 +19,9 @@ namespace TestHmiInterface
         {
             InitializeComponent();
 
-            ModBus = new ModBus(ModBus.ModBusMode.RTU, 1, 19200);
+            ModBus = new ModBus(ModBus.ModBusMode.RTU, 1, 115200);
 
-            Result result = ModBus.Connect("COM1");
+            Result result = ModBus.Connect("COM2");
             if (result.Success == false)
                 MessageBox.Show(result.ErrorMessage);
 
@@ -62,17 +62,28 @@ namespace TestHmiInterface
                     break;
             }
 
-            textBox1.Text = json;
+            this.Invoke(new MethodInvoker(() => {
+                textBox1.Text = json;
+            }));
+
+            
         }
 
         private void BtnReadCoils_Click(object sender, EventArgs e)
         {
             textBox1.Text = "";
-            ModBus.ReadCoils(new ModBusReadRequest()
+            //ModBus.ReadCoils(new ModBusReadRequest()
+            //{
+            //    SlaveAddress = 01,
+            //    StartAddress = 02,
+            //    NumberOfPoints = 1,
+            //});
+
+            ModBus.ReadHoldingRegisters(new ModBusReadRequest()
             {
-                SlaveAddress = 17,
-                StartAddress = 19,
-                NumberOfPoints = 37,
+                SlaveAddress = 01,
+                StartAddress = 02,
+                NumberOfPoints = 1,
             });
         }
     }

@@ -206,6 +206,7 @@ namespace HardwareInterface
             int status = 0;
             Commands tmpCommand = Commands.UnknownCommand;
             byte tmpCommandParam = 0;
+            int tmpDataIndex = 0;
             int tmpDataLenght = 0;
             byte tmpSeqNum = 0;
             byte[] tmpData = new byte[1];
@@ -235,6 +236,7 @@ namespace HardwareInterface
                             status++;
                             checkSum = 0;
                             tmpDataLenght = 0;
+                            tmpDataIndex = 0;
                             continue;
                         }
 
@@ -287,10 +289,10 @@ namespace HardwareInterface
 
                         if (status == 7)
                         {
-                            tmpData[tmpDataLenght++] = b;
+                            tmpData[tmpDataIndex++] = b;
                             checkSum += b;
 
-                            if (tmpDataLenght >= tmpData.Length)
+                            if (tmpDataIndex >= tmpData.Length)
                             {
                                 status++;
                                 continue;
