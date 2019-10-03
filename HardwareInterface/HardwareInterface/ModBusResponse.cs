@@ -7,7 +7,7 @@ using static HardwareInterface.ModBus;
 
 namespace HardwareInterface
 {
-    public class ModBusResponse
+    public abstract class ModBusResponse
     {
         public ModBusMode Mode { set; get; }
         public byte SlaveAddress { set; get; }

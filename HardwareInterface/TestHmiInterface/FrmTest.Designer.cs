@@ -29,33 +29,47 @@
         private void InitializeComponent()
         {
             this.btnReadCoils = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnReadCoils
             // 
-            this.btnReadCoils.Location = new System.Drawing.Point(29, 26);
+            this.btnReadCoils.Location = new System.Drawing.Point(14, 14);
+            this.btnReadCoils.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnReadCoils.Name = "btnReadCoils";
-            this.btnReadCoils.Size = new System.Drawing.Size(171, 56);
+            this.btnReadCoils.Size = new System.Drawing.Size(375, 29);
             this.btnReadCoils.TabIndex = 0;
             this.btnReadCoils.Text = "ReadCoils";
             this.btnReadCoils.UseVisualStyleBackColor = true;
             this.btnReadCoils.Click += new System.EventHandler(this.BtnReadCoils_Click);
             // 
-            // Form1
+            // textBox1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.textBox1.Location = new System.Drawing.Point(14, 164);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(375, 141);
+            this.textBox1.TabIndex = 1;
+            // 
+            // FrmTest
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 610);
+            this.ClientSize = new System.Drawing.Size(400, 317);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.btnReadCoils);
-            this.Name = "Form1";
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Name = "FrmTest";
             this.Text = "Form1";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.Button btnReadCoils;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 
