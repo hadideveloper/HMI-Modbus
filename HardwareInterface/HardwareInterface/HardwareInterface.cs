@@ -52,7 +52,7 @@ namespace HardwareInterface
             }
         }
 
-        public Result InitSerialPort(int port, int baudrate)
+        public Result InitSerialPort(int port, int baudrate, SerialPortMode mode)
         {
             return _cm.SendPacket(new Packet() { 
                 Command = Commands.InitSerialPort,
@@ -62,7 +62,8 @@ namespace HardwareInterface
                     (byte)(baudrate >> 24),
                     (byte)(baudrate >> 16),
                     (byte)(baudrate >> 8), 
-                    (byte)(baudrate)
+                    (byte)(baudrate),
+                    (byte)mode,
                 }
             });
         }

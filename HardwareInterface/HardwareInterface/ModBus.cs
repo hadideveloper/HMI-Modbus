@@ -12,15 +12,17 @@ namespace HardwareInterface
         public ModBusMode Mode { set; get; } 
         public int Port { set; get; }
         public int Baudrate { set; get; }
+        public SerialPortMode SerialPortMode { set; get; }
         public HardwareInterface HardwareInterface { set; get; }
 
         public event ReceiveNewModBudResponse OnReceiveNewResponse;
 
-        public ModBus(ModBusMode mode, int port, int baudrate)
+        public ModBus(ModBusMode mode, int port, int baudrate, SerialPortMode serialPortMode)
         {
             Mode = mode;
             Port = port;
             Baudrate = baudrate;
+            SerialPortMode = serialPortMode;
 
             HardwareInterface = new HardwareInterface(port, baudrate, new Commands[] { Commands.SendOverSerialPort, Commands.InitSerialPort });
 
@@ -38,7 +40,7 @@ namespace HardwareInterface
                 return openingPcSerialPortResult;
             }
 
-            return HardwareInterface.InitSerialPort(Port, Baudrate);
+            return HardwareInterface.InitSerialPort(Port, Baudrate, SerialPortMode);
         }
 
         private bool HardwareInterface_OnReceiceNewPacket(object sender, Packet packet)
@@ -46,9 +48,6 @@ namespace HardwareInterface
             if (packet.Data == null || packet.Data.Length < 7)
                 return false;
 
-            bool checkCrc = false;
-
-            
             if (packet.Data[0] == ':' && packet.Data[packet.Data.Length-2] == 0x0D && packet.Data[packet.Data.Length-1] == 0x0A)
             {
                 //res.Mode = ModBusMode.ASCII;
@@ -58,14 +57,15 @@ namespace HardwareInterface
             {
                 ModbusFunctions function = (ModbusFunctions)packet.Data[1];
 
-                if (function == ModbusFunctions.ReadCoils )
+                if (function == ModbusFunctions.ReadCoils)
                 {
-                    var res = new ModBusReadCoilResponse();
-                    res.Mode = ModBusMode.RTU;
-
-                    res.SlaveAddress = packet.Data[0];
-                    res.Function = function;
-                    res.ByteCount = packet.Data[2];
+                    var res = new ModBusReadCoilResponse()
+                    {
+                        Mode = ModBusMode.RTU,
+                        SlaveAddress = packet.Data[0],
+                        Function = function,
+                        ByteCount = packet.Data[2],
+                    };
 
                     res.Data = new byte[res.ByteCount];
                     for (int i = 0; i < res.ByteCount; i++)
@@ -75,58 +75,39 @@ namespace HardwareInterface
 
                     var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
 
-                    if( crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
-                        OnReceiveNewResponse?.Invoke(this, ModbusFunctions.ReadCoils, res);
-                }
-                else if( function == ModbusFunctions.ReadInputs)
-                {
-                    var res = new ModBusReadInputResponse();
-                    res.Mode = ModBusMode.RTU;
-
-                    res.SlaveAddress = packet.Data[0];
-                    res.Function = function;
-                    res.ByteCount = packet.Data[2];
-
-                    res.Data = new byte[res.ByteCount];
-                    for (int i = 0; i < res.ByteCount; i++)
-                    {
-                        res.Data[i] = packet.Data[i + 3];
-                    }
-
-                    var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
-
-                    if( crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
-                        OnReceiveNewResponse?.Invoke(this, ModbusFunctions.ReadInputs, res);
-                }
-                else if(function == ModbusFunctions.ReadHoldingRegisters)
-                {
-                    var res = new ModBusReadHoldingRegisterResponse();
-                    res.Mode = ModBusMode.RTU;
-
-                    res.SlaveAddress = packet.Data[0];
-                    res.Function = function;
-                    res.ByteCount = packet.Data[2];
-
-                    res.Data = new ushort[res.ByteCount/2];
-                    int n = 0;
-                    for (int i = 0; i < res.ByteCount; i+=2)
-                    {
-                        res.Data[n++] = (ushort)((packet.Data[i + 3] << 8) | (packet.Data[i + 4]));
-                    }
-
-                    var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
-
-                    if(crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
-                        OnReceiveNewResponse?.Invoke(this, ModbusFunctions.ReadHoldingRegisters, res);
+                    if (crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
+                        OnReceiveNewResponse?.Invoke(this, function, res);
                 }
                 else if (function == ModbusFunctions.ReadInputs)
                 {
-                    var res = new ModBusReadInputRegisterResponse();
-                    res.Mode = ModBusMode.RTU;
+                    var res = new ModBusReadInputResponse()
+                    {
+                        Mode = ModBusMode.RTU,
+                        SlaveAddress = packet.Data[0],
+                        Function = function,
+                        ByteCount = packet.Data[2],
+                    };
 
-                    res.SlaveAddress = packet.Data[0];
-                    res.Function = function;
-                    res.ByteCount = packet.Data[2];
+                    res.Data = new byte[res.ByteCount];
+                    for (int i = 0; i < res.ByteCount; i++)
+                    {
+                        res.Data[i] = packet.Data[i + 3];
+                    }
+
+                    var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
+
+                    if (crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
+                        OnReceiveNewResponse?.Invoke(this, function, res);
+                }
+                else if (function == ModbusFunctions.ReadHoldingRegisters)
+                {
+                    var res = new ModBusReadHoldingRegisterResponse()
+                    {
+                        Mode = ModBusMode.RTU,
+                        SlaveAddress = packet.Data[0],
+                        Function = function,
+                        ByteCount = packet.Data[2],
+                    };
 
                     res.Data = new ushort[res.ByteCount / 2];
                     int n = 0;
@@ -138,7 +119,46 @@ namespace HardwareInterface
                     var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
 
                     if (crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
-                        OnReceiveNewResponse?.Invoke(this, ModbusFunctions.ReadInputs, res);
+                        OnReceiveNewResponse?.Invoke(this, function, res);
+                }
+                else if (function == ModbusFunctions.ReadInputs)
+                {
+                    var res = new ModBusReadInputRegisterResponse()
+                    {
+                        Mode = ModBusMode.RTU,
+                        SlaveAddress = packet.Data[0],
+                        Function = function,
+                        ByteCount = packet.Data[2],
+                    };
+
+                    res.Data = new ushort[res.ByteCount / 2];
+                    int n = 0;
+                    for (int i = 0; i < res.ByteCount; i += 2)
+                    {
+                        res.Data[n++] = (ushort)((packet.Data[i + 3] << 8) | (packet.Data[i + 4]));
+                    }
+
+                    var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
+
+                    if (crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
+                        OnReceiveNewResponse?.Invoke(this, function, res);
+                }
+                else if(function == ModbusFunctions.WriteSingleCoil || function == ModbusFunctions.WriteSingleRegister)
+                {
+                    var res = new ModBusWriteSingleResponse()
+                    {
+                        Mode = ModBusMode.RTU,
+                        SlaveAddress = packet.Data[0],
+                        Function = function,
+                    };
+
+                    res.Address = (ushort)((packet.Data[2] << 8) | (packet.Data[3]));
+                    res.Value = (ushort)((packet.Data[4] << 8) | (packet.Data[4]));
+
+                    var crc16 = ModbusUtility.ComputeCRC16(packet.Data, 0, packet.Data.Length - 2);
+
+                    if (crc16[0] == packet.Data[packet.Data.Length - 2] && crc16[1] == packet.Data[packet.Data.Length - 1])
+                        OnReceiveNewResponse?.Invoke(this, function, res);
                 }
             }
 
@@ -194,7 +214,18 @@ namespace HardwareInterface
         {
             if (Mode == ModBusMode.RTU)
             {
-                byte[] message = RtuMakeFunction5(req, ModbusFunctions.ReadInputRegisters);
+                byte[] message = RtuMakeFunction5(req, ModbusFunctions.WriteSingleCoil);
+                return HardwareInterface.SendOverSerialPort(Port, message);
+            }
+
+            return Result.NotImplemented;
+        }
+
+        public Result WriteSingleRegister(ModBusSingleWriteRequest req)
+        {
+            if (Mode == ModBusMode.RTU)
+            {
+                byte[] message = RtuMakeFunction5(req, ModbusFunctions.WriteSingleRegister);
                 return HardwareInterface.SendOverSerialPort(Port, message);
             }
 

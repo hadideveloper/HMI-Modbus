@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace HardwareInterface
 {
-    public class ModBusReadCoilResponse : ModBusResponse
+    public enum SerialPortMode
     {
-        public byte ByteCount { set; get; }
-        public byte[] Data { set; get; }
+        RS232,
+        RS422,
+        RS485,
     }
 }

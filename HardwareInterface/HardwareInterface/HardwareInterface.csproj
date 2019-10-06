@@ -53,10 +53,6 @@
     <Compile Include="ModBus.cs" />
     <Compile Include="ModBusFunctions.cs" />
     <Compile Include="ModBusMode.cs" />
-    <Compile Include="ModBusReadInputRegisterResponse.cs" />
-    <Compile Include="ModBusReadHoldingRegisterResponse.cs" />
-    <Compile Include="ModBusReadInputResponse.cs" />
-    <Compile Include="ModBusReadCoilResponse.cs" />
     <Compile Include="ModBusRequest.cs" />
     <Compile Include="ModBusResponse.cs" />
     <Compile Include="ModbusUtility.cs" />
@@ -64,6 +60,7 @@
     <Compile Include="Result.cs" />
     <Compile Include="ComManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerialPortMode.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SyncList.cs" />
   </ItemGroup>

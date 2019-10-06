@@ -19,7 +19,8 @@ namespace TestHmiInterface
         {
             InitializeComponent();
 
-            ModBus = new ModBus(ModBus.ModBusMode.RTU, 1, 115200);
+            
+            ModBus = new ModBus(ModBus.ModBusMode.RTU, 1, 115200, SerialPortMode.RS232);
 
             Result result = ModBus.Connect("COM2");
             if (result.Success == false)

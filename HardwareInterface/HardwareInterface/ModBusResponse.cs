@@ -14,4 +14,34 @@ namespace HardwareInterface
         public ModbusFunctions Function { set; get; }
         
     }
+
+    public class ModBusReadCoilResponse : ModBusResponse
+    {
+        public byte ByteCount { set; get; }
+        public byte[] Data { set; get; }
+    }
+
+    public class ModBusReadHoldingRegisterResponse : ModBusResponse
+    {
+        public byte ByteCount { set; get; }
+        public ushort[] Data { set; get; }
+    }
+
+    public class ModBusReadInputRegisterResponse : ModBusResponse
+    {
+        public byte ByteCount { set; get; }
+        public ushort[] Data { set; get; }
+    }
+
+    public class ModBusReadInputResponse : ModBusResponse
+    {
+        public byte ByteCount { set; get; }
+        public byte[] Data { set; get; }
+    }
+
+    public class ModBusWriteSingleResponse: ModBusResponse
+    {
+        public ushort Address { set; get; }
+        public ushort Value { set; get; }
+    }
 }
