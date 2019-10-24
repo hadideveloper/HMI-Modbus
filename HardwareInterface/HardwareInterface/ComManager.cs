@@ -104,6 +104,9 @@ namespace HardwareInterface
 
         public Result SendPacket(Packet packet, bool force = false)
         {
+            if (_lstSendList.Count > _settings.MaxSendListCapacity)
+                return Result.FullBuffer;
+
             if (force)
             {
                 SendCommand(packet, 0);

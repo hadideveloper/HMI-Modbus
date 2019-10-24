@@ -20,6 +20,7 @@ namespace HardwareInterface
         public event ReceiveNewModBudResponse OnReceiveNewResponse;
 
         private byte _seqNum = 0;
+        private int _maxSendCapacity = 0;
 
         public ModBus(ModBusMode mode, int port, int baudrate, SerialPortMode serialPortMode)
         {
@@ -31,6 +32,8 @@ namespace HardwareInterface
             HardwareInterface = new HardwareInterface(port, baudrate, new Commands[] { Commands.SendOverSerialPort, Commands.InitSerialPort });
 
             PendingReadRequestList = new SyncList<ModBusReadRequest>();
+
+            _maxSendCapacity = SettingManager.Instance.Settings.MaxSendListCapacity;
 
             HardwareInterface.OnReceiceNewPacket += HardwareInterface_OnReceiceNewPacket;
         }
@@ -196,14 +199,12 @@ namespace HardwareInterface
 
         public Result ReadCoils(ModBusReadRequest req)
         {
-            _seqNum++;
-            if (_seqNum == 0)
-                _seqNum++;
+            if (HardwareInterface.PacketsInSendingList > _maxSendCapacity)
+                return Result.FullBuffer;
 
             if (Mode == ModBusMode.RTU)
             {
-                req.SeqNum = _seqNum;
-                PendingReadRequestList.Add(req);
+                AddToReadPending(req);
 
                 byte[] message = RtuMakeFunction4(req, ModbusFunctions.ReadCoils);
                 return HardwareInterface.SendOverSerialPort(Port, _seqNum, message);
@@ -214,14 +215,12 @@ namespace HardwareInterface
 
         public Result ReadInputs(ModBusReadRequest req)
         {
-            _seqNum++;
-            if (_seqNum == 0)
-                _seqNum++;
+            if (HardwareInterface.PacketsInSendingList > _maxSendCapacity)
+                return Result.FullBuffer;
 
             if (Mode == ModBusMode.RTU)
             {
-                req.SeqNum = _seqNum;
-                PendingReadRequestList.Add(req);
+                AddToReadPending(req);
 
                 byte[] message = RtuMakeFunction4(req, ModbusFunctions.ReadInputs);
                 return HardwareInterface.SendOverSerialPort(Port, _seqNum, message);
@@ -232,13 +231,12 @@ namespace HardwareInterface
 
         public Result ReadHoldingRegisters(ModBusReadRequest req)
         {
-            _seqNum++;
-            if (_seqNum == 0)
-                _seqNum++;
+            if (HardwareInterface.PacketsInSendingList > _maxSendCapacity)
+                return Result.FullBuffer;
+
             if (Mode == ModBusMode.RTU)
             {
-                req.SeqNum = _seqNum;
-                PendingReadRequestList.Add(req);
+                AddToReadPending(req);
 
                 byte[] message = RtuMakeFunction4(req, ModbusFunctions.ReadHoldingRegisters);
                 return HardwareInterface.SendOverSerialPort(Port, _seqNum, message);
@@ -249,13 +247,12 @@ namespace HardwareInterface
 
         public Result ReadInputRegisters(ModBusReadRequest req)
         {
-            _seqNum++;
-            if (_seqNum == 0)
-                _seqNum++;
+            if (HardwareInterface.PacketsInSendingList > _maxSendCapacity)
+                return Result.FullBuffer;
+
             if (Mode == ModBusMode.RTU)
             {
-                req.SeqNum = _seqNum;
-                PendingReadRequestList.Add(req);
+                AddToReadPending(req);
 
                 byte[] message = RtuMakeFunction4(req, ModbusFunctions.ReadInputRegisters);
                 return HardwareInterface.SendOverSerialPort(Port, _seqNum, message);
@@ -264,8 +261,24 @@ namespace HardwareInterface
             return Result.NotImplemented;
         }
 
+        private void AddToReadPending(ModBusReadRequest req)
+        {
+            _seqNum++;
+            if (_seqNum == 0)
+                _seqNum++;
+
+            req.SeqNum = _seqNum;
+            PendingReadRequestList.Add(req);
+
+            if (PendingReadRequestList.Count > _maxSendCapacity)
+                PendingReadRequestList.RemoveAt(0);
+        }
+
         public Result WriteSingleCoil(ModBusSingleWriteRequest req)
         {
+            if (HardwareInterface.PacketsInSendingList > _maxSendCapacity)
+                return Result.FullBuffer;
+
             if (Mode == ModBusMode.RTU)
             {
                 byte[] message = RtuMakeFunction5(req, ModbusFunctions.WriteSingleCoil);
@@ -277,6 +290,9 @@ namespace HardwareInterface
 
         public Result WriteSingleRegister(ModBusSingleWriteRequest req)
         {
+            if (HardwareInterface.PacketsInSendingList > _maxSendCapacity)
+                return Result.FullBuffer;
+
             if (Mode == ModBusMode.RTU)
             {
                 byte[] message = RtuMakeFunction5(req, ModbusFunctions.WriteSingleRegister);

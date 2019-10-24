@@ -16,5 +16,6 @@ namespace HardwareInterface
         ReceiveTimeout,
         ResponseTimeout,
         NotImplemented,
+        FullBuffer,
     }
 }

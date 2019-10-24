@@ -87,5 +87,18 @@ namespace HardwareInterface
                 };
             }
         }
+
+        public static Result FullBuffer
+        {
+            get
+            {
+                return new Result()
+                {
+                    Success = false,
+                    ErrorCode = ErrorCodes.FullBuffer,
+                    ErrorMessage = "Buffer is full",
+                };
+            }
+        }
     }
 }

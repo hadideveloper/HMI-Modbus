@@ -90,6 +90,14 @@ namespace HardwareInterface
             });
         }
 
+        public int PacketsInSendingList
+        {
+            get
+            {
+                return _cm.SendPendingPackets;
+            }
+        }
+
         private bool ComMan_OnReceivedPack(object sender, Packet p)
         {
             //! Check if it's supported Command for this interface

@@ -16,6 +16,7 @@ namespace HardwareInterface
         public int Version { set; get; }
         public int DelayBetweenTwoPacket { set; get; }
         public int TryToSendPacket { set; get; }
+        public int MaxSendListCapacity { set; get; }
        
     }
     public class SettingManager
@@ -108,6 +109,7 @@ namespace HardwareInterface
                 DelayBetweenTwoPacket = 5,
                 TryToSendPacket = 5,
                 ComPort = "COM1",
+                MaxSendListCapacity = 1000,
             };
         }
 
