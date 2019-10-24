@@ -162,7 +162,12 @@ namespace HardwareInterface
                     if (_lstSendList.Count > 0)
                     {
                         Packet p = _lstSendList.TakeFirst();
-                        SendCommand(p, seqNum++);
+
+                        if (p.SeqNum == 0)
+                            SendCommand(p, seqNum++);
+                        else
+                            SendCommand(p, p.SeqNum);
+
                         if (p.IsWaitForResponse)
                         {
                             tryCount = 0;

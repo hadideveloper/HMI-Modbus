@@ -12,7 +12,8 @@ namespace HardwareInterface
         public ModBusMode Mode { set; get; }
         public byte SlaveAddress { set; get; }
         public ModbusFunctions Function { set; get; }
-        
+        public ushort StartAddress { set; get; }
+
     }
 
     public class ModBusReadCoilResponse : ModBusResponse

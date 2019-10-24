@@ -15,7 +15,11 @@ namespace HardwareInterface
         public SerialPortMode SerialPortMode { set; get; }
         public HardwareInterface HardwareInterface { set; get; }
 
+        public SyncList<ModBusReadRequest> PendingReadRequestList { set; get; }
+
         public event ReceiveNewModBudResponse OnReceiveNewResponse;
+
+        private byte _seqNum = 0;
 
         public ModBus(ModBusMode mode, int port, int baudrate, SerialPortMode serialPortMode)
         {
@@ -25,6 +29,8 @@ namespace HardwareInterface
             SerialPortMode = serialPortMode;
 
             HardwareInterface = new HardwareInterface(port, baudrate, new Commands[] { Commands.SendOverSerialPort, Commands.InitSerialPort });
+
+            PendingReadRequestList = new SyncList<ModBusReadRequest>();
 
             HardwareInterface.OnReceiceNewPacket += HardwareInterface_OnReceiceNewPacket;
         }
@@ -57,6 +63,25 @@ namespace HardwareInterface
             {
                 ModbusFunctions function = (ModbusFunctions)packet.Data[1];
 
+                ModBusReadRequest req = null;
+                if(function == ModbusFunctions.ReadCoils || function == ModbusFunctions.ReadHoldingRegisters ||
+                    function == ModbusFunctions.ReadInputRegisters || function == ModbusFunctions.ReadInputs)
+                {
+                    for (int i = 0; i < PendingReadRequestList.Count; i++)
+                    {
+                        ModBusReadRequest pr = PendingReadRequestList.GetAt(i);
+                        if (packet.SeqNum == pr.SeqNum)
+                        {
+                            req = pr;
+                            PendingReadRequestList.RemoveAt(i);
+                            break;
+                        }
+                    }
+
+                    if (req == null)
+                        return false;
+                }
+
                 if (function == ModbusFunctions.ReadCoils)
                 {
                     var res = new ModBusReadCoilResponse()
@@ -65,6 +90,7 @@ namespace HardwareInterface
                         SlaveAddress = packet.Data[0],
                         Function = function,
                         ByteCount = packet.Data[2],
+                        StartAddress = req.StartAddress,
                     };
 
                     res.Data = new byte[res.ByteCount];
@@ -86,6 +112,7 @@ namespace HardwareInterface
                         SlaveAddress = packet.Data[0],
                         Function = function,
                         ByteCount = packet.Data[2],
+                        StartAddress = req.StartAddress,
                     };
 
                     res.Data = new byte[res.ByteCount];
@@ -107,6 +134,7 @@ namespace HardwareInterface
                         SlaveAddress = packet.Data[0],
                         Function = function,
                         ByteCount = packet.Data[2],
+                        StartAddress = req.StartAddress,
                     };
 
                     res.Data = new ushort[res.ByteCount / 2];
@@ -129,6 +157,7 @@ namespace HardwareInterface
                         SlaveAddress = packet.Data[0],
                         Function = function,
                         ByteCount = packet.Data[2],
+                        StartAddress = req.StartAddress,
                     };
 
                     res.Data = new ushort[res.ByteCount / 2];
@@ -167,11 +196,17 @@ namespace HardwareInterface
 
         public Result ReadCoils(ModBusReadRequest req)
         {
+            _seqNum++;
+            if (_seqNum == 0)
+                _seqNum++;
 
             if (Mode == ModBusMode.RTU)
             {
+                req.SeqNum = _seqNum;
+                PendingReadRequestList.Add(req);
+
                 byte[] message = RtuMakeFunction4(req, ModbusFunctions.ReadCoils);
-                return HardwareInterface.SendOverSerialPort(Port, message);
+                return HardwareInterface.SendOverSerialPort(Port, _seqNum, message);
             }
             
             return Result.NotImplemented;
@@ -179,10 +214,17 @@ namespace HardwareInterface
 
         public Result ReadInputs(ModBusReadRequest req)
         {
+            _seqNum++;
+            if (_seqNum == 0)
+                _seqNum++;
+
             if (Mode == ModBusMode.RTU)
             {
+                req.SeqNum = _seqNum;
+                PendingReadRequestList.Add(req);
+
                 byte[] message = RtuMakeFunction4(req, ModbusFunctions.ReadInputs);
-                return HardwareInterface.SendOverSerialPort(Port, message);
+                return HardwareInterface.SendOverSerialPort(Port, _seqNum, message);
             }
 
             return Result.NotImplemented;
@@ -190,10 +232,16 @@ namespace HardwareInterface
 
         public Result ReadHoldingRegisters(ModBusReadRequest req)
         {
+            _seqNum++;
+            if (_seqNum == 0)
+                _seqNum++;
             if (Mode == ModBusMode.RTU)
             {
+                req.SeqNum = _seqNum;
+                PendingReadRequestList.Add(req);
+
                 byte[] message = RtuMakeFunction4(req, ModbusFunctions.ReadHoldingRegisters);
-                return HardwareInterface.SendOverSerialPort(Port, message);
+                return HardwareInterface.SendOverSerialPort(Port, _seqNum, message);
             }
 
             return Result.NotImplemented;
@@ -201,10 +249,16 @@ namespace HardwareInterface
 
         public Result ReadInputRegisters(ModBusReadRequest req)
         {
+            _seqNum++;
+            if (_seqNum == 0)
+                _seqNum++;
             if (Mode == ModBusMode.RTU)
             {
+                req.SeqNum = _seqNum;
+                PendingReadRequestList.Add(req);
+
                 byte[] message = RtuMakeFunction4(req, ModbusFunctions.ReadInputRegisters);
-                return HardwareInterface.SendOverSerialPort(Port, message);
+                return HardwareInterface.SendOverSerialPort(Port, _seqNum, message);
             }
 
             return Result.NotImplemented;

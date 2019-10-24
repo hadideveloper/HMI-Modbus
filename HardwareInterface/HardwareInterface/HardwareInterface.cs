@@ -76,7 +76,19 @@ namespace HardwareInterface
                 Data = message,
                 IsWaitForResponse = true,
             });
-        } 
+        }
+
+        public Result SendOverSerialPort(int port, byte seqNum, byte[] message)
+        {
+            return _cm.SendPacket(new Packet()
+            {
+                Command = Commands.SendOverSerialPort,
+                CommandParam = (byte)port,
+                Data = message,
+                IsWaitForResponse = true,
+                SeqNum = seqNum, 
+            });
+        }
 
         private bool ComMan_OnReceivedPack(object sender, Packet p)
         {

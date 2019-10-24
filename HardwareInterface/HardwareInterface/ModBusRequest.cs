@@ -10,6 +10,7 @@ namespace HardwareInterface
     {
         public byte SlaveAddress { set; get; }
         public ushort StartAddress { set; get; }
+        public int SeqNum { get; set; }
     }
     public class ModBusReadRequest : ModBusRequest
     {
