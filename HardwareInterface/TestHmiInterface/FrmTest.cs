@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace TestHmiInterface
     public partial class FrmTest : Form
     {
         ModBus ModBus;
+        GeneralCommands GeneralCommands;
         public FrmTest()
         {
             InitializeComponent();
@@ -28,6 +30,26 @@ namespace TestHmiInterface
 
             ModBus.OnReceiveNewResponse += ModBus_OnReceiveNewResponse;
 
+            GeneralCommands = new GeneralCommands();
+
+            result = GeneralCommands.Connect("COM2");
+            GeneralCommands.OnReceiceNewResponse += GeneralCommands_OnReceiceNewResponse;
+
+        }
+
+        private void GeneralCommands_OnReceiceNewResponse(object sender, Commands command, object response)
+        {
+            if(command == Commands.Shutdown)
+            {
+                Process.Start("shutdown.exe", "-s -t 00");
+            }
+            else if( command == Commands.GetVersion)
+            {
+                var rc = (byte[])response;
+                this.Invoke(new MethodInvoker(() => {
+                    textBox1.Text = string.Format($"{rc[0]}.{rc[1]}.{rc[2]}");
+                }));
+            }
         }
 
         private void ModBus_OnReceiveNewResponse(object sender, ModbusFunctions function, object response)

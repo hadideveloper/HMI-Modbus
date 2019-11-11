@@ -15,6 +15,7 @@ namespace HardwareInterface
         InitCan,
         SendOverSerialPort,
         SendOverCan,
+        Shutdown,
 
         UnknownCommand,
 

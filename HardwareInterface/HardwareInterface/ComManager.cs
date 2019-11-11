@@ -58,6 +58,9 @@ namespace HardwareInterface
         {
             try
             {
+                if (_sp.IsOpen)
+                    return Result.Okay;
+
                 _sp = new SerialPort()
                 {
                     BaudRate = 115200,
