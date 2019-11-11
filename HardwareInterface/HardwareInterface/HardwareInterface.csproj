@@ -57,6 +57,7 @@
     <Compile Include="ModBusResponse.cs" />
     <Compile Include="ModbusUtility.cs" />
     <Compile Include="Packet.cs" />
+    <Compile Include="GeneralCommands.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="ComManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
