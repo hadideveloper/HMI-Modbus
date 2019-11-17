@@ -169,6 +169,7 @@ namespace HardwareInterface
                     {
                         Packet p = _lstSendList.TakeFirst();
 
+                        IsRep = false;
                         if (p.SeqNum == 0)
                             SendCommand(p, seqNum++);
                         else
@@ -324,6 +325,8 @@ namespace HardwareInterface
                                     Data = tmpData,
                                     SeqNum = tmpSeqNum,
                                 };
+
+                                IsRep = true;
 
                                 OnReceiveNewPacket?.Invoke(this, p);
                             }

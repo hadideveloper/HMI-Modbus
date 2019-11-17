@@ -44,27 +44,23 @@ namespace HardwareInterface
         }
         public Result GetVersion()
         {
-            HardwareInterface.ComManager.SendPacket(new Packet()
+            return HardwareInterface.ComManager.SendPacket(new Packet()
             {
                 Command = Commands.GetVersion,
                 CommandParam = 0,
                 Data = null,
                 IsWaitForResponse = true,
             });
-
-            return Result.Okay;
         }
         public Result Shutdown()
         {
-            HardwareInterface.ComManager.SendPacket(new Packet()
+            return HardwareInterface.ComManager.SendPacket(new Packet()
             {
                 Command = Commands.Shutdown,
                 CommandParam = 0,
                 Data = null,
                 IsWaitForResponse = true,
             });
-
-            return Result.Okay;
         }
     }
 }
