@@ -58,7 +58,7 @@ namespace HardwareInterface
         {
             try
             {
-                if (_sp.IsOpen)
+                if (_sp != null && _sp.IsOpen)
                     return Result.Okay;
 
                 _sp = new SerialPort()
